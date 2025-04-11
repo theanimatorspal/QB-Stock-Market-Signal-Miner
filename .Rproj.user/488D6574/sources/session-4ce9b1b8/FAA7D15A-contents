@@ -1,0 +1,298 @@
+# Help
+?mean
+?ChickWeight
+# Objects and functions
+a <- 5
+b <- 6
+
+sum(a,b)
+# concat
+ages <- c(5, 6)
+ages
+sum(ages)
+
+names <- c("fuck", "you")
+friends <- data.frame(names, ages)
+# view the data frame
+#View(friends)
+# structure
+#str(friends)
+friends$ages
+friends$names
+
+sum(friends$ages)
+friends[1,1]
+friends[1, ]
+friends[, 1]
+# Built in data
+data()
+install.packages("dplyr")
+library(dplyr)
+View(starwars)
+
+install.packages("tidyverse")
+library(tidyverse)
+
+#shift control and m
+starwars %>% 
+  filter(height > 150 & mass < 200) %>% #only this 
+  mutate(height_in_meters = height/100) %>% # this is modifying and creating a new variable here
+  select(height_in_meters, mass) %>% # What variables I want to work with
+  arrange(-mass) %>% # Biggest to smallest, by negative
+  #View()
+  plot()
+
+# Exploring the data set
+View(msleep) # just views
+glimpse(msleep)
+head(msleep) # tuppo ko kehi dekhauxa
+class(msleep$name) # type (class) of the variable
+length(msleep) # no of cols
+length(msleep$name) # kati ota entries xa
+names(msleep)  # all name of cols
+unique(msleep$vore) # unique categories (removing repeated ones) in that column
+missing <- !complete.cases(msleep)
+complete.cases(msleep)
+msleep[missing,]
+msleep[complete.cases(msleep), ]
+
+# Cleaning the data
+starwars %>% 
+  select(name, height, mass)
+
+starwars %>% 
+  select(1:3) # first second and third column
+
+starwars %>% 
+  select(ends_with("color")) %>% # last ma color vako wala column linxa
+  View()
+
+starwars %>% 
+  select(name, height, everything())
+
+# Changing Variable Name
+starwars %>% 
+  rename("characters" = "name") %>% # RHS ko chae old naam, left ko new
+  rename("weight" = "mass")
+  head()
+  
+class(starwars$hair_color)
+starwars$hair_color <- as.factor(starwars$hair_color)
+
+starwars %>% 
+  mutate(hair_color = as.character(hair_color)) %>% 
+  mutate(hair_color = as.factor(hair_color)) %>% 
+  glimpse()
+
+# changing factor levels
+df <- starwars
+
+df$sex <- as.factor(df$sex)
+levels(df$sex)
+
+df <- df %>% 
+  mutate(sex = factor(sex, levels = c("male", "female", "hemaphroditic", "none")))
+
+# aba columns ko thaam ma rows
+starwars %>% 
+  select(mass, sex) %>% # suru ma select handine
+  filter(mass < 55 & sex == "male")
+
+# Recode data
+starwars %>% 
+  select(sex) %>% # yesma chae lhs vaneko to be modified value ho
+  mutate(sex = recode(sex, "male" = "man", "female" = "woman"))
+
+# dealing with missing data 
+mean(starwars$height, na.rm = TRUE) # not available remove= true
+
+starwars %>% 
+  drop_na(hair_color)
+
+# Dealing with duplicates
+Names <- c("Peter", "John", "Andrew", "Peter")
+Age <- c(22, 33, 44, 22)
+
+friends <- data.frame(Names, Age)
+friends
+friends %>% 
+  distinct()
+distinct(friends)
+
+#Manipulate
+#Change or create variable
+starwars %>% 
+  mutate(height_m = height / 100) %>% 
+  select(name, height, height_m) %>% 
+  mutate(tallness = 
+           if_else(height_m < 1, "short", "tall"))
+
+#Reshape data with pivot wider
+install.packages("gapminder")
+library(gapminder)
+View(gapminder)
+
+data <- gapminder %>% 
+  select(country, year, lifeExp)
+
+View(data)
+
+wide_data <- data %>% # year bata names nikalne as common,
+  # use lifeexpectancey underneath the year
+  pivot_wider(names_from = year, values_from = lifeExp)
+
+View(wide_data)
+
+# names_to, naam k k thyo ? year haru thyo, tellai year column ma garne
+# value k k thyo tellai lifeExp column ma rakhne
+long_data <- wide_data %>% # dosro column dekhi 13th column samma
+  pivot_longer(2:length(wide_data), names_to = "year", values_to = "lifeExp")
+View(long_data)
+
+# Describing your data
+View(msleep)
+min(msleep$awake)
+max(msleep$awake)
+range(msleep$awake)
+IQR(msleep$awake) # interquartile range
+
+# centrality
+mean(msleep$awake)
+median(msleep$awake)
+
+# Variance
+var(msleep$awake)
+summary(msleep$awake)
+msleep %>% 
+  select(sleep_total, awake) %>% 
+  summary()
+
+msleep %>% 
+  drop_na(vore) %>% 
+  group_by(vore) %>% 
+  summarize(Lower = min(sleep_total), Average = mean(sleep_total),
+            Upper = max(sleep_total), Difference = 
+              max(sleep_total) - min(sleep_total)) %>% 
+  arrange(Average) %>% 
+  View()
+
+# Create table
+table(msleep$vore)
+msleep %>% 
+  select(vore, order) %>% 
+  # for order in the list, include them, if not not
+  filter(order %in% c("Rodentia", "Primates")) %>% 
+  table() %>% 
+  View()
+
+# Data Visualization
+plot(pressure)
+# grammar of graphcis
+  # data
+  # mapping data can be mapped to aesthetics
+  # geometry  
+
+# Bar Plots
+ggplot(data = starwars, mapping = aes(x = gender))+ # add the geometry
+  geom_bar()
+
+# Histograms
+starwars %>% 
+  drop_na(height) %>% 
+  ggplot(mapping = aes(x = height))+ 
+  geom_histogram()
+
+# Box Plots
+starwars %>% 
+  drop_na(height) %>% 
+  ggplot(mapping = aes(y = height))+
+  geom_boxplot(fill = "steelblue")+
+  theme_bw()+
+  labs(title = "Box plot of height", x = "Height of charac")
+
+starwars %>% 
+  drop_na(height) %>% 
+  select(height) %>% 
+  summary()
+
+starwars %>% 
+  drop_na(height) %>% 
+  ggplot(mapping = aes(height))+
+  geom_density()
+
+# filter(something %in% c(somethings))
+
+starwars %>% 
+  drop_na(height) %>% 
+  #filter(sex %in% c("male", "female")) %>% 
+  ggplot(mapping = aes(x = height, color = sex, fill = sex))+
+  geom_density(alpha = 0.2)+
+  theme_classic()
+
+# Scatter plots
+starwars %>%
+  filter(mass < 200) %>% 
+  #filter(sex %in% c("male", "none")) %>% 
+  ggplot(aes(x = height, y = mass, color = sex))+
+  geom_point(size = 3, alpha = 0.2)+
+  geom_smooth()+ # draw a smooth linear model over points
+  facet_wrap(~sex)+
+  theme_bw()+
+  labs(title = "Height and mass by sex")
+
+# analyzing has to have
+view(gapminder)
+gapminder
+
+gapminder %>% 
+  filter(continent %in% c("Asia", "Europe")) %>% 
+  t.test(lifeExp ~ continent,
+         data = .,
+         alternative = "two.sided")
+# . tells R to put the data piped there.
+# life expectancy as a function of continent
+# probability such that there is no difference in value is P
+
+#analysis of Variance
+gapminder %>% 
+  filter(year == 2007) %>% 
+  filter(continent %in% c("Americas", "Europe", "Asia")) %>% 
+  aov(lifeExp ~ continent, data = .) %>% 
+#  summary() %>% 
+  TukeyHSD() %>% 
+  plot()
+# null hypothesis all countries have same life expectance
+# p is 3.42e - 05
+# TukeyHSD() each pair ko dinxa
+
+# chi square test
+head(iris)
+
+flowers <- iris %>% 
+  mutate(size = cut(Sepal.Length, breaks = 3, labels = c("Small", "Medium", "large"))) %>% 
+  select(Species, size) %>% 
+  view()
+  #view()
+flowers %>% 
+  select(size) %>% 
+  table() %>% 
+  chisq.test()
+# null -> all three have same proportions
+# Goodness of fit
+# Test of independence
+# Knowing the value of one of the variable helps to predict the other or not?
+flowers %>% 
+  table() %>% 
+  chisq.test()
+
+#linear model
+head(cars, 10)
+
+cars %>% 
+  lm(dist ~ speed, data = .) %>% 
+  plot()
+# null hypothesis -. slope is 0
+# p for null hypothesis
+# R2 65% can be explained by the independent variable
+
+
