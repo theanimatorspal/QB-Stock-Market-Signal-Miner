@@ -5,7 +5,10 @@ pkgs <- c("tidyverse",
                 "dplyr",
                 "tidyr",
                 "lubridate",
-                "stringr")
+                "stringr",
+                "plotly",
+                "patchwork"
+          )
 
 base <- function() {
   installed <- pkgs %in% rownames(installed.packages())
