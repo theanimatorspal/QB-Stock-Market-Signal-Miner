@@ -7,7 +7,8 @@ pkgs <- c("tidyverse",
                 "lubridate",
                 "stringr",
                 "plotly",
-                "patchwork"
+                "patchwork",
+                "randomForest"
           )
 
 base <- function() {

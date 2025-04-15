@@ -1,6 +1,6 @@
 source("scraper.R")
 
-data <- get_stock_data()
+#data <- get_stock_data()
 
 generate_features <- function(data) {
   data_xts <- xts::xts(data, order.by = data$date)
@@ -24,7 +24,7 @@ generate_features <- function(data) {
       returns = as.numeric(return_xts),
       sma_10 = as.numeric(sma_10),
       sma_20 = as.numeric(sma_20),
-      RSI_14 = as.numeric(rsi_14),
+      rsi_14 = as.numeric(rsi_14),
       macd = as.numeric(macd_macd),
       signal = as.numeric(macd_signal),
       bbands_up = as.numeric(bbands_up),
@@ -35,7 +35,7 @@ generate_features <- function(data) {
     ) %>% 
     replace_na(list(sma_10 = 0,
                     sma_20 = 0,
-                    RSI_14 = 0,
+                    rsi_14 = 0,
                     macd = 0,
                     signal = 0,
                     bbands_up = 0,
@@ -47,7 +47,7 @@ generate_features <- function(data) {
   return (data)
 }
 
-features <- generate_features(data) 
+#features <- generate_features(data) 
 
 
 plot_features <- function (features, start_date = "2023-1-1", end_date = "2024-2-1") {
@@ -90,13 +90,11 @@ plot_features <- function (features, start_date = "2023-1-1", end_date = "2024-2
     )
   }
   
-  rsi_plot <- plot_line(features$RSI_14, "RSI")
+  rsi_plot <- plot_line(features$rsi_14, "RSI")
   willr_14_plot <- plot_line(features$willr_14, "Willr_14")
   cci_plot <- plot_line(features$cci_20, "cci_20")
   
   return(list(bbands_plot, macd_plot, rsi_plot, willr_14_plot, cci_plot))
 }
 
-plot <- plot_features(features, "2022-4-1", "2022-5-5")
-  
-plot[4]
+#plot <- plot_features(features, "2022-4-1", "2022-5-5")
