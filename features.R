@@ -41,7 +41,7 @@ generate_features <- function(data) {
 
 
 features <- generate_features(data) 
-
+date_limit <- as.Date(c("2023-1-1", "2024-2-1"))
 macd_plot <- features %>% 
   ggplot(aes(x = date))+
   geom_line(aes(y = macd), colour = "blue", alpha = 0.1)+
@@ -55,7 +55,7 @@ macd_plot <- features %>%
     labels = c("bear", "bull"),
     name = "MACD Histogram"
     )+
-  coord_cartesian(xlim = as.Date(c("2023-1-1", "2024-2-1")))+
+  coord_cartesian(xlim = date_limit)+
   theme_minimal()
 
 bbands_plot <- features %>% 
@@ -64,10 +64,17 @@ bbands_plot <- features %>%
   geom_line(aes(y = bbands_down), color = "tomato", linetype = "dashed") +
   geom_line(aes(y = bbands_avg), color = "purple", linetype = "dotted") +
   labs(title = "📈 Bollinger Bands", y = "Price") +
-  coord_cartesian(xlim = as.Date(c("2023-01-01", "2024-02-01")))+
+  coord_cartesian(xlim = date_limit)+
   theme_minimal()
 
-bbands_plot  / macd_plot
+rsi_plot <- features %>%
+  ggplot(aes(x = date)) +
+  geom_line(aes(y = RSI_14))+
+  labs(title = "RSI")+
+  coord_cartesian(xlim = date_limit)+
+  theme_minimal()
+
+bbands_plot  / macd_plot / rsi_plot
   
 chart_series <- function () {
   stock_xts <- xts::xts(data[, c("open", "close", "adjusted", "high", "low")], order.by = data$date)
