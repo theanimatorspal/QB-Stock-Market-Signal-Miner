@@ -1,0 +1,185 @@
+---
+title: "learn_stuff"
+output: html_document
+---
+
+# 4 Linear Regression 📈
+
+This doc breaks down **linear regression** concepts mathematically, with worked-out examples.
+
+---
+
+## 4.1 Prerequisites
+
+Before diving into regression:
+
+- Understand **variables**:  
+  - \( X \) = independent (input) variable  
+  - \( Y \) = dependent (output) variable  
+- Know basic stats:  
+  - Mean \( \bar{X} \), variance \( \text{Var}(X) \), correlation \( r \)
+
+---
+
+## 4.2 Simple Linear Regression
+
+### Model Equation
+
+The model is:  
+\[
+Y = \beta_0 + \beta_1 X + \varepsilon
+\]
+
+Where:
+- \( \beta_0 \) = intercept (Y when X = 0)  
+- \( \beta_1 \) = slope (change in Y per unit X)  
+- \( \varepsilon \) = error term
+
+---
+
+### Example
+
+Given data:  
+\[
+\begin{align*}
+X &: 1,\ 2,\ 3 \\
+Y &: 2,\ 4,\ 5
+\end{align*}
+\]
+
+Calculate means:  
+\[
+\bar{X} = 2,\quad \bar{Y} = \frac{2+4+5}{3} = 3.67
+\]
+
+Compute slope \( \beta_1 \):  
+\[
+\beta_1 = \frac{\sum (X_i - \bar{X})(Y_i - \bar{Y})}{\sum (X_i - \bar{X})^2}
+= \frac{(1-2)(2-3.67)+(2-2)(4-3.67)+(3-2)(5-3.67)}{(1-2)^2+(2-2)^2+(3-2)^2}
+= \frac{1.67 + 0 + 1.33}{1 + 0 + 1}
+= \frac{3}{2} = 1.5
+\]
+
+Intercept \( \beta_0 \):  
+\[
+\beta_0 = \bar{Y} - \beta_1 \bar{X} = 3.67 - 1.5 \cdot 2 = 0.67
+\]
+
+So, regression line:  
+\[
+Y = 0.67 + 1.5X
+\]
+
+---
+
+## 4.3 Multiple Linear Regression
+
+### Model
+
+\[
+Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \dots + \beta_p X_p + \varepsilon
+\]
+
+Where:
+- \( X_1, X_2, \dots \) are features
+- Each \( \beta_i \) shows effect of \( X_i \) on Y
+
+---
+
+### Example
+
+Suppose:
+
+\[
+\text{Exam Score} = \beta_0 + \beta_1 (\text{Hours Studied}) + \beta_2 (\text{Sleep Hours})
+\]
+
+If we get:  
+\[
+\text{Score} = 20 + 5 \cdot \text{Hours} + 2 \cdot \text{Sleep}
+\]
+
+Then:
+- 1 extra hour of study → +5 score  
+- 1 extra hour of sleep → +2 score
+
+---
+
+## 4.4 Model Accuracy
+
+### \( R^2 \) — Coefficient of Determination
+
+\[
+R^2 = 1 - \frac{\text{SS}_{\text{res}}}{\text{SS}_{\text{tot}}}
+\]
+
+- \( R^2 = 1 \): perfect fit  
+- \( R^2 = 0 \): model explains nothing
+
+### Mean Squared Error (MSE)
+
+\[
+\text{MSE} = \frac{1}{n} \sum_{i=1}^n (Y_i - \hat{Y}_i)^2
+\]
+
+Lower MSE = better model.
+
+---
+
+## 4.5 Common Problems in Linear Regression ⚠️
+
+- **Multicollinearity**: predictors \( X_i \) are correlated  
+- **Outliers**: extreme values skew the line  
+- **Heteroscedasticity**: error variance not constant  
+- **Non-linearity**: data doesn’t follow a line
+
+---
+
+## 4.6 Principal Component Regression (PCR)
+
+### Idea:
+
+- Too many \( X \)’s? Convert them into **uncorrelated components** (PCA)
+- Then regress on top principal components
+
+### Steps:
+
+1. Standardize data  
+2. Do PCA → get components \( Z_1, Z_2, \dots \)  
+3. Fit model:  
+\[
+Y = \alpha_0 + \alpha_1 Z_1 + \alpha_2 Z_2 + \dots
+\]
+
+---
+
+## 4.7 Partial Least Squares (PLS)
+
+Similar to PCR but **considers Y** while forming components.
+
+- Finds components that explain both \( X \) and \( Y \) well
+- More predictive than PCR
+
+---
+
+## 4.8 Interpreting Coefficients
+
+### In multiple regression:
+
+If:  
+\[
+Y = 10 + 3X_1 - 2X_2
+\]
+
+Then:
+- \( X_1 \) ↑ by 1 → \( Y \) ↑ by 3 (holding \( X_2 \) constant)  
+- \( X_2 \) ↑ by 1 → \( Y \) ↓ by 2 (holding \( X_1 \) constant)
+
+---
+
+## 4.9 Final Thoughts
+
+- Use simple linear regression for 1 feature
+- Use multiple regression when more predictors
+- Use PCR/PLS when data has **many variables**
+- Always check assumptions and interpret your model carefully
