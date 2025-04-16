@@ -19,39 +19,39 @@ model_predict <- function(features,
                                                      "macd",
                                                      "signal",
                                                      "bbands_avg")])
-  if (model_type == "rf")
-  {
+  if (model_type == "rf") {
     model <- randomForest(direction ~ rsi_14 + macd + signal + bbands_avg,
                           data = train_data)
-    predicted <- predict(model, newdata = test_data)
+    predicted_ <- predict(model, newdata = test_data)
     test_plot <- test_data %>% 
       mutate(
-        predicted = predicted
+        predicted = predicted_
       ) %>% 
       ggplot(aes(x = date, y = adjusted))+
         geom_line(color = "black", alpha = 0.1)+
         coord_cartesian(xlim = as.Date(c(date_start, date_end)))+
-        geom_point(aes(shape = predicted), size = 5)+
-        geom_point(aes(color = direction), alpha = 0.5, size = 5)+
-        scale_color_manual(values = c("red", "blue"))
+        geom_ribbon(aes(ymin = adjusted - 5, ymax = adjusted + 5, fill = predicted == direction), alpha = 0.3)
   } else if (model_type == "xgb") {
     label <- as.numeric(as.character(train_data$direction))
     xgb_dtrain <- xgb.DMatrix(data = train_data_as_matrix, label = label)
     xgb_dtest <- xgb.DMatrix(data = test_data_as_matrix )
-   model <- xgboost(data = xgb_dtrain, nrounds = 50,
+    model <- xgboost(data = xgb_dtrain, nrounds = 50,
                     objective = "binary:logistic", verbose = 0) 
-   predicted <- predict(model, xgb_dtest)
-   test_plot <- test_data %>% 
+    predicted_ <- predict(model, xgb_dtest)
+    test_plot <- test_data %>% 
       mutate(
-        predicted = cut(as.numeric(predicted),
+        predicted = cut(as.numeric(predicted_),
                         breaks = c(0, 0.33, 0.66, 1),
-                        labels = c( "low", "med", "high"))
+                        labels = c( "low", "med", "high")),
+        difference = as.numeric(direction) - as.numeric(predicted_)
       ) %>% 
       ggplot(aes(x = date, y = adjusted))+
         geom_line(color = "black", alpha = 0.1)+
+        geom_ribbon(aes(ymin = adjusted - 5,
+                        ymax = adjusted + 5,
+                        fill = abs(difference) < 0.3),
+                        alpha = 0.3)+
         coord_cartesian(xlim = as.Date(c(date_start, date_end)))+
-        geom_point(aes(shape = predicted), size = 5)+
-        geom_point(aes(color = direction), alpha = 0.1, size = 5)+
         scale_color_manual(values = c("red", "blue"))
   } else if (model_type == "lbm") {
     label <- as.numeric(as.character(train_data$direction))
@@ -60,18 +60,21 @@ model_predict <- function(features,
                                      metric = "binary_logloss"),
                        data = lgb_dtrain, 
                        nround = 50)
-    predicted <- predict(model, test_data_as_matrix)
+    predicted_ <- predict(model, test_data_as_matrix)
     test_plot <- test_data %>% 
         mutate(
-          predicted = cut(as.numeric(predicted),
+          predicted = cut(as.numeric(predicted_),
                           breaks = c(0, 0.33, 0.66, 1),
-                          labels = c( "low", "med", "high"))
+                          labels = c( "low", "med", "high")),
+        difference = as.numeric(direction) - as.numeric(predicted_)
         ) %>% 
         ggplot(aes(x = date, y = adjusted))+
           geom_line(color = "black", alpha = 0.1)+
           coord_cartesian(xlim = as.Date(c(date_start, date_end)))+
-          geom_point(aes(shape = predicted), size = 5)+
-          geom_point(aes(color = direction), alpha = 0.1, size = 5)+
+          geom_ribbon(aes(ymin = adjusted - 5,
+                          ymax = adjusted + 5,
+                          fill = abs(difference) < 0.3),
+                          alpha = 0.3)+
           scale_color_manual(values = c("red", "blue"))
       
   }
@@ -90,6 +93,20 @@ train_data <- features %>%
 test_data <- features %>% 
   filter(date > as.Date("2023-1-1"))
 
-pr <- model_predict(features, train_data, test_data, model_type = "lgm")
-pr[2]
+prediction_rf <- model_predict(features,
+                               train_data,
+                               test_data,
+                               model_type = "rf")
 
+
+prediction_xgb <- model_predict(features,
+                               train_data,
+                               test_data,
+                               model_type = "xgb")
+
+prediction_lbm <- model_predict(features,
+                               train_data,
+                               test_data,
+                               model_type = "lbm")
+
+prediction_rf[2] / prediction_xgb[2] / prediction_lbm[2]
