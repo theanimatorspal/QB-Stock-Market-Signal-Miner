@@ -1,0 +1,79 @@
+---
+title: "📈 Stock Signal Miner"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+    runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(ggplot2)
+library(dplyr)
+library(randomForest)
+library(xgboost)
+library(lightgbm)
+source("model.R")  
+```
+
+Column {.sidebar}
+---------------------------------------------------------------------
+
+``` {r}
+
+dateRangeInput("date_range", "Select Date Range", start = "2024-07-01", end = "2025-01-01")
+
+selectInput("model_type", "Model Type", choices = c("rf", "xgb", "lbm"))
+
+textInput("retrain", "Retrain Model", value = FALSE)
+
+textInput("stock_symbol", "Stock Symbol", value = "AAPL")
+
+actionButton("run", "Run Prediction")
+
+```
+
+Column 
+---------------------------------------------------------------------
+```{r}
+
+renderPlot({
+  input$run   
+  
+  isolate( {
+      data <- get_stock_data(symbol = input$stock_symbol)
+      features <- generate_features(data) %>% 
+        mutate(direction = factor(ifelse(returns > 0, 1, 0)))
+      
+      train_data <- features %>% 
+        filter(date <= as.Date("2023-01-01"))
+      test_data <- features %>% 
+        filter(date > as.Date("2023-01-01"))
+      
+      date_start <- input$date_range[1]
+      date_end <- input$date_range[2]
+      model_type <- input$model_type
+      model_name <- ifelse(input$model_name == "", NULL, input$model_name)
+      
+      result <- model_predict(
+        features,
+        train_data,
+        test_data,
+        date_start = as.character(date_start),
+        date_end = as.character(date_end),
+        model_type = model_type,
+        model_name = paste0(model_name, "-", input$stock_symbol),
+        retrain = input$retrain
+      )
+      
+      result[2]
+      
+    }  )
+    
+})
+```
+
+
+

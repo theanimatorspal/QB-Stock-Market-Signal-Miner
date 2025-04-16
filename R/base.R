@@ -10,7 +10,10 @@ pkgs <- c("tidyverse",
                 "patchwork",
                 "randomForest",
                 "xgboost",
-                "lightgbm"
+                "lightgbm",
+          
+                "flexdashboard",
+                "shiny"
           )
 
 base <- function() {

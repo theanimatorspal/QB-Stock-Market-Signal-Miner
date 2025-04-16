@@ -79,6 +79,8 @@ model_predict <- function(features,
   return(list(model = model, plot = test_plot))
 }
 
+sample <- function() {
+
   data <- get_stock_data()
   features <- generate_features(data) %>% 
     mutate(
@@ -110,3 +112,4 @@ model_predict <- function(features,
     (prediction_xgb[[2]] + ggtitle("XGBoost")) /
     (prediction_lbm[[2]] + ggtitle("LightGBM"))
 #}
+}
