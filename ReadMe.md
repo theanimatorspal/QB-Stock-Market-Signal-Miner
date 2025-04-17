@@ -5,14 +5,13 @@
   <img src="https://img.shields.io/badge/build-stable-green?style=flat-square&logo=r" />
   <img src="https://img.shields.io/badge/frontend-shiny-blueviolet?style=flat-square&logo=shiny" />
   <img src="https://img.shields.io/badge/backend-python-yellow?style=flat-square&logo=python" />
-  <img src="https://img.shields.io/badge/data-fetching-dynamic-critical?style=flat-square&logo=selenium" />
   <img src="https://img.shields.io/badge/models-ML%20powered-brightgreen?style=flat-square&logo=mlflow" />
 </p>
 
 ---
 
 ## 🧵 About
-
+*
 This project is a **flexdashboard-powered application** for stock market signal prediction. It combines **dynamic web scraping with Python (Selenium)** and **data wrangling, visualization, and modeling in R**.
 ---
 
