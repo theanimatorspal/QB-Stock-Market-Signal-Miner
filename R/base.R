@@ -13,7 +13,9 @@ pkgs <- c("tidyverse",
                 "lightgbm",
           
                 "flexdashboard",
-                "shiny"
+                "shiny",
+          
+                "reticulate"
           )
 
 base <- function() {
