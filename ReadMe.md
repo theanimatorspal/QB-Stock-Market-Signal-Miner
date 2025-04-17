@@ -11,8 +11,9 @@
 ---
 
 ## 🧵 About
-*
+
 This project is a **flexdashboard-powered application** for stock market signal prediction. It combines **dynamic web scraping with Python (Selenium)** and **data wrangling, visualization, and modeling in R**.
+
 ---
 
 ## 🚀 Preview
