@@ -1,9 +1,37 @@
 <h1 align="center">📈 Quant-Based Stock Signal Miner</h1>
+<p align="center"><i>Machine Learning Dashboard for Stock Direction Prediction</i></p>
+<p align="center"><b>Built with:</b> R 🧠 | Python 🐍 | Shiny ⚡ | Selenium 🤖 | flexdashboard 📊</p>
 <p align="center">
-  <strong>Machine Learning Pipeline for Market Direction Prediction</strong><br>
-  <em>Random Forest · XGBoost · LightGBM · Shiny · Flexdashboard</em>
+  <img src="https://img.shields.io/badge/build-stable-green?style=flat-square&logo=r" />
+  <img src="https://img.shields.io/badge/frontend-shiny-blueviolet?style=flat-square&logo=shiny" />
+  <img src="https://img.shields.io/badge/backend-python-yellow?style=flat-square&logo=python" />
+  <img src="https://img.shields.io/badge/data-fetching-dynamic-critical?style=flat-square&logo=selenium" />
+  <img src="https://img.shields.io/badge/models-ML%20powered-brightgreen?style=flat-square&logo=mlflow" />
 </p>
 
---
+---
 
-Currently, you can run the ```app.R``` file from ```/R``` folder in RStudio. Lot to do still.
+## 🧵 About
+
+This project is a **flexdashboard-powered application** for stock market signal prediction. It combines **dynamic web scraping with Python (Selenium)** and **data wrangling, visualization, and modeling in R**.
+---
+
+## 🚀 Preview
+
+<p align="center">
+  <img width="900" alt="Dashboard Screenshot" src="https://github.com/user-attachments/assets/316fd9a9-5ee2-41a8-b99b-cd6c0b9b850b" />
+</p>
+
+---
+
+## 📦 Stack Overview
+
+| Layer            | Tool/Tech       | Purpose                          |
+|------------------|------------------|----------------------------------|
+| UI & Controls     | Shiny + flexdashboard | Interactive user interface     |
+| Visualization     | ggplot2           | Time series & directional plots |
+| Backend Logic     | R + Python bridge | Modeling pipeline, utils       |
+| Data Fetching     | Python + Selenium | Dynamic extraction from web     |
+| ML Models         | RF / XGBoost / LightGBM | Directional prediction       |
+
+---
