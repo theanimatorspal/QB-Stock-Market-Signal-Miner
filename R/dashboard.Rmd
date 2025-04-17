@@ -43,58 +43,113 @@ textInput("stock_symbol", "Stock Symbol", value = "AAPL")
 
 selectInput("stock_exchange", "Stock Exchange", choices = c("NOT_NEPSE", "NEPSE"))
 
-actionButton("run", "Run Prediction")
+selectInput("feature_plot", "Select Feature Plot",
+            choices = c("Bollinger Bands" = "bbands",
+                        "MACD" = "macd",
+                        "RSI" = "rsi",
+                        "Williams %R" = "willr",
+                        "CCI" = "cci"),
+            selected = "bbands")
+
+actionButton("run", "Predict/Plot")
 
 ```
 
-Column 
+Column {.tabset .tabset-fade}
 ---------------------------------------------------------------------
 ```{r}
+tabsetPanel(
+  tabPanel("📊 Predict", 
+    renderPlot({
+      input$run   
 
-renderPlot({
-  input$run   
+      isolate({
+        date_start <- input$date_range[1]
+        date_end <- input$date_range[2]
+
+        date_start_view <- input$date_range_view[1]
+        date_end_view <- input$date_range_view[2]
+
+        data <- get_stock_data(
+          symbol = input$stock_symbol,
+          start_date = date_start,
+          end_date = date_end,
+          stock_exchange = input$stock_exchange)
+
+        features <- generate_features(data) %>% 
+          mutate(direction = factor(ifelse(returns > 0, 1, 0)))
+
+        train_data <- features %>% 
+          filter(date <= as.Date(input$date_upto))
+        test_data <- features %>% 
+          filter(date > as.Date(input$date_upto))
+
+        model_type <- input$model_type
+
+        result <- model_predict(
+          features,
+          train_data,
+          test_data,
+          date_start = as.character(date_start_view),
+          date_end = as.character(date_end_view),
+          model_type = model_type,
+          model_name = paste0(as.character(input$model_type), "-", input$stock_symbol),
+          retrain = ifelse(input$retrain == "TRUE", TRUE, FALSE)
+        )
+
+        result[2]
+      })
+    })
+  ),
   
-  isolate( {
-    
-      date_start <- input$date_range[1]
-      date_end <- input$date_range[2]
+  tabPanel("Data",
+    renderTable({
+      input$run
       
-      date_start_view <- input$date_range_view[1]
-      date_end_view <- input$date_range_view[2]
-      
-      data <- get_stock_data(
-        symbol = input$stock_symbol,
-        start_date = date_start,
-        end_date = date_end,
-        stock_exchange = input$stock_exchange)
-      
-      features <- generate_features(data) %>% 
-        mutate(direction = factor(ifelse(returns > 0, 1, 0)))
-      
-      train_data <- features %>% 
-        filter(date <= as.Date(input$date_upto))
-      test_data <- features %>% 
-        filter(date > as.Date(input$date_upto))
-      
-      
-      model_type <- input$model_type
-      
-      result <- model_predict(
-        features,
-        train_data,
-        test_data,
-        date_start = as.character(date_start_view),
-        date_end = as.character(date_end_view),
-        model_type = model_type,
-        model_name = paste0(as.character(input$model_type), "-", input$stock_symbol),
-        retrain = ifelse(input$retrain == "TRUE", TRUE, FALSE)
-      )
-      
-      result[2]
-      
-    }  )
-    
-})
+      isolate({
+        date_start <- input$date_range[1]
+        date_end <- input$date_range[2]
+
+        data <- get_stock_data(
+          symbol = input$stock_symbol,
+          start_date = date_start,
+          end_date = date_end,
+          stock_exchange = input$stock_exchange)
+
+        features <- generate_features(data)
+        head(features, 10)
+      })
+    })),
+  
+  tabPanel("🧮 Features",
+           renderPlot({
+              input$run   
+              isolate({
+                date_start <- input$date_range[1]
+                date_end <- input$date_range[2]
+        
+                data <- get_stock_data(
+                  symbol = input$stock_symbol,
+                  start_date = date_start,
+                  end_date = date_end,
+                  stock_exchange = input$stock_exchange)
+        
+                features <- generate_features(data)
+                plots <- plot_features(features,
+                              start_date = input$date_range_view[1],
+                              end_date = input$date_range_view[2])
+                named_plots <- list(
+                  bbands = plots[[1]],
+                  macd   = plots[[2]],
+                  rsi    = plots[[3]],
+                  willr  = plots[[4]],
+                  cci    = plots[[5]]
+                )
+                
+                named_plots[[input$feature_plot]]
+              })
+           }))
+  )
 ```
 
 
