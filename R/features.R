@@ -71,10 +71,11 @@ plot_features <- function (features, start_date = "2023-1-1", end_date = "2024-2
   bbands_plot_yrange <- range(features$bbands_up) + c(-10, 10)
   bbands_plot <- features %>% 
     ggplot(aes(x = date))+
-    geom_line(aes(y = bbands_up), color = "skyblue", linetype = "dashed") +
-    geom_line(aes(y = bbands_down), color = "tomato", linetype = "dashed") +
-    geom_line(aes(y = bbands_avg), color = "purple", linetype = "dotted") +
+    #geom_line(aes(y = bbands_up), color = "skyblue", linetype = "dashed") +
+    #geom_line(aes(y = bbands_down), color = "tomato", linetype = "dashed") +
+    #geom_line(aes(y = bbands_avg), color = "purple", linetype = "dotted") +
     labs(title = "📈 Bollinger Bands", y = "Price") +
+    geom_bbands(aes(high = high, low = low, close = close))+
     coord_cartesian(xlim = date_limit, ylim = range(features$bbands_up,
                                                     features$bbands_down) + c(-10, 10))+
     theme_minimal()

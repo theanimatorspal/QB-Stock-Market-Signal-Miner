@@ -102,25 +102,6 @@ tabsetPanel(
     })
   ),
   
-  tabPanel("Data",
-    renderTable({
-      input$run
-      
-      isolate({
-        date_start <- input$date_range[1]
-        date_end <- input$date_range[2]
-
-        data <- get_stock_data(
-          symbol = input$stock_symbol,
-          start_date = date_start,
-          end_date = date_end,
-          stock_exchange = input$stock_exchange)
-
-        features <- generate_features(data)
-        head(features, 10)
-      })
-    })),
-  
   tabPanel("🧮 Features",
            renderPlot({
               input$run   
@@ -148,7 +129,28 @@ tabsetPanel(
                 
                 named_plots[[input$feature_plot]]
               })
-           }))
+           })),
+  
+  tabPanel("Data",
+    renderTable({
+      input$run
+      
+      isolate({
+        date_start <- input$date_range[1]
+        date_end <- input$date_range[2]
+
+        data <- get_stock_data(
+          symbol = input$stock_symbol,
+          start_date = date_start,
+          end_date = date_end,
+          stock_exchange = input$stock_exchange)
+
+        features <- generate_features(data)
+        head(features, 10)
+      })
+    })),
+  
+  
   )
 ```
 
