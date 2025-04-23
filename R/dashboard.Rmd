@@ -7,6 +7,108 @@ output:
     runtime: shiny
 ---
 
+```{r title_ui, echo=FALSE}
+div(style = "display: flex; justify-content: flex-end; align-items: top; gap: 10px; margin-bottom: 10px;",
+  dateInput("top_date", NULL, value = Sys.Date()),
+  actionButton("top_action", "⛏️ Mine From Top")
+)
+```
+
+```{r}
+observeEvent(input$top_action, {
+  req(input$stock_symbol)
+
+  data <- get_stock_data(
+    symbol = input$stock_symbol,
+    start_date = input$date_range[1],
+    end_date = input$top_date,
+    stock_exchange = input$stock_exchange
+  )
+
+  features <- generate_features(data)
+
+  stats <- features %>%
+    select(-date) %>%
+    summarise(across(everything(), list(
+      mean = ~round(mean(., na.rm = TRUE), 3),
+      sd   = ~round(sd(., na.rm = TRUE), 3)
+    )))
+
+  stats_long <- stats %>%
+    pivot_longer(everything(),
+                 names_to = c("Feature", "Stat"),
+                 names_sep = "_(?=[^_]+$)",
+                 values_to = "Value") %>% 
+    pivot_wider(
+      names_from = Stat,
+      values_from = Value
+    )
+  
+  rsi <- mean(features$rsi_14, na.rm = TRUE)
+  macd <- mean(features$macd - features$signal, na.rm = TRUE)  
+  cci <- mean(features$cci_20, na.rm = TRUE)
+  suggestions <- c()
+  
+  if (!is.na(rsi)) {
+    if (rsi > 70) {
+      suggestions <- c(suggestions, "📈 RSI is high → Market may be overbought → Consider selling or holding.")
+    } else if (rsi < 30) {
+      suggestions <- c(suggestions, "📉 RSI is low → Market may be oversold → Could be a buying signal.")
+    } else {
+      suggestions <- c(suggestions, "📊 RSI is neutral → Wait or monitor closely.")
+    }
+  }
+  
+  if (!is.na(macd)) {
+    if (macd > 0) {
+      suggestions <- c(suggestions, "💹 MACD Histogram is positive → Momentum is up.")
+    } else if (macd < 0) {
+      suggestions <- c(suggestions, "🔻 MACD Histogram is negative → Momentum is down.")
+    } else {
+      suggestions <- c(suggestions, "⚖️ MACD is neutral → No clear momentum.")
+    }
+  }
+  
+  if (!is.na(cci)) {
+    if (cci > 100) {
+      suggestions <- c(suggestions, "📈 CCI > 100 → Potentially overbought.")
+    } else if (cci < -100) {
+      suggestions <- c(suggestions, "📉 CCI < -100 → Potentially oversold.")
+    } else {
+      suggestions <- c(suggestions, "📊 CCI within normal range.")
+    }
+  }
+  
+  suggestion <- paste(suggestions, collapse = "<br><br>")
+
+  
+  stats_text <- paste0(
+    "<table style='width:100%; border-collapse:collapse;'>",
+    "<tr style='background:#f2f2f2;'><th style='text-align:left; padding:4px;'>📌 Feature</th><th style='text-align:right; padding:4px;'>Mean</th><th style='text-align:right; padding:4px;'>SD</th></tr>",
+    paste0(
+      apply(stats_long, 1, function(row) {
+        sprintf("<tr><td style='padding:4px;'>%s</td><td style='padding:4px; text-align:right;'>%.3f</td><td style='padding:4px; text-align:right;'>%.3f</td></tr>",
+                row["Feature"], as.numeric(row["mean"]), as.numeric(row["sd"]))
+      }),
+      collapse = ""
+    ),
+    "</table>"
+  )
+  
+  showModal(modalDialog(
+    title = paste("📊 Feature Stats for", input$stock_symbol),
+    HTML(paste0(
+      "<b>📅 Range:</b> ", input$date_range[1], " to ", input$top_date, "<br><br>",
+      "<b>📉 Statistical Summary:</b><br>", stats_text, "<br><br>",
+      "<b>🧠 Signal Suggestion:</b><br>", suggestion
+    )),
+    easyClose = TRUE,
+    footer = modalButton("OK 👍")
+  ))
+})
+
+```
+
 ```{r setup, include=FALSE}
 library(flexdashboard)
 library(shiny)
@@ -153,6 +255,4 @@ tabsetPanel(
   
   )
 ```
-
-
 
