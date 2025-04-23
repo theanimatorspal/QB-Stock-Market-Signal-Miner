@@ -19,7 +19,11 @@ This project is a **flexdashboard-powered application** for stock market signal 
 ## 🚀 Preview
 
 <p align="center">
-  <img width="900" alt="Dashboard Screenshot" src="https://github.com/user-attachments/assets/316fd9a9-5ee2-41a8-b99b-cd6c0b9b850b" />
+  <img width="500" alt="Dashboard Screenshot" src="https://github.com/user-attachments/assets/316fd9a9-5ee2-41a8-b99b-cd6c0b9b850b" />
+</p>
+
+<p align="center">
+  <img width="500" alt="Dashboard Screenshot" src="https://github.com/user-attachments/assets/6cee60df-e0e3-496d-ace0-30fe6ec15103" />
 </p>
 
 ---
