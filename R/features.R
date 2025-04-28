@@ -1,8 +1,8 @@
 source("scraper.R")
 
-#data <- get_stock_data()
+#data <- ksai.get_stock_data()
 
-generate_features <- function(data) {
+ksai.generate_features <- function(data) {
   data_xts <- xts::xts(data, order.by = data$date)
   data_adjusted_xts <- xts::xts(data$adjusted, order.by = data$date)
   return_xts <- dailyReturn(data_adjusted_xts, type = "log")
@@ -48,10 +48,10 @@ generate_features <- function(data) {
   return (data)
 }
 
-#features <- generate_features(data) 
+#features <- ksai.generate_features(data) 
 
 
-plot_features <- function (features, start_date = "2023-1-1", end_date = "2024-2-1") {
+ksai.plot_features <- function (features, start_date = "2023-1-1", end_date = "2024-2-1") {
   date_limit <- as.Date(c(start_date, end_date))
   macd_plot <- features %>% 
     ggplot(aes(x = date))+
@@ -99,4 +99,4 @@ plot_features <- function (features, start_date = "2023-1-1", end_date = "2024-2
   return(list(bbands_plot, macd_plot, rsi_plot, willr_14_plot, cci_plot))
 }
 
-#plot <- plot_features(features, "2022-4-1", "2022-5-5")
+#plot <- ksai.plot_features(features, "2022-4-1", "2022-5-5")

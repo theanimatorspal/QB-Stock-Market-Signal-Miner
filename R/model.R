@@ -1,6 +1,6 @@
 source("features.R")
 
-model_predict <- function(features,
+ksai.model_predict <- function(features,
                           train_data,
                           test_data,
                           date_start = "2024-7-1",
@@ -81,8 +81,8 @@ model_predict <- function(features,
 
 sample <- function() {
 
-  data <- get_stock_data()
-  features <- generate_features(data) %>% 
+  data <- ksai.get_stock_data()
+  features <- ksai.generate_features(data) %>% 
     mutate(
       direction = factor(ifelse(returns > 0, 1, 0))
     )
@@ -92,18 +92,18 @@ sample <- function() {
   test_data <- features %>% 
     filter(date > as.Date("2023-1-1"))
   
-  prediction_rf <- model_predict(features,
+  prediction_rf <- ksai.model_predict(features,
                                  train_data,
                                  test_data,
                                  model_type = "rf")
   
   
-  prediction_xgb <- model_predict(features,
+  prediction_xgb <- ksai.model_predict(features,
                                  train_data,
                                  test_data,
                                  model_type = "xgb")
   
-  prediction_lbm <- model_predict(features,
+  prediction_lbm <- ksai.model_predict(features,
                                  train_data,
                                  test_data,
                                  model_type = "lbm")

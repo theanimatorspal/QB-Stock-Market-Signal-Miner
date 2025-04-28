@@ -1,7 +1,7 @@
 source("features.R")
 
-portfolio.wrangle <- function(csv_string, type = "NEPSE") {
-  df <- read_csv(csv_string)
+ksai.portfolio.wrangle <- function(csv_file, type = "NEPSE") {
+  df <- read_csv(csv_file)
   wrangled <- df %>% 
     select(-1, -3, -4, -6, -7) %>% 
     head(-1) %>% 
@@ -11,10 +11,10 @@ portfolio.wrangle <- function(csv_string, type = "NEPSE") {
   return (wrangled)
 }
 
-portfolio.optimize <- function (portfolio_wrangled, stock_exchange = "NEPSE") {
+ksai.portfolio.optimize <- function (portfolio_wrangled, stock_exchange = "NEPSE") {
   portfolio_prices <- portfolio_wrangled$symbol %>% 
     set_names() %>% 
-    map(~ get_stock_data(symbol = .x, stock_exchange = stock_exchange
+    map(~ ksai.get_stock_data(symbol = .x, stock_exchange = stock_exchange
                               )$adjusted) %>% 
     bind_cols()
   

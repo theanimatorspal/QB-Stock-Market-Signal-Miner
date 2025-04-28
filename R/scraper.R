@@ -1,6 +1,6 @@
 source("base.R")
 
-get_stock_data <- function(symbol = "AAPL",
+ksai.get_stock_data <- function(symbol = "AAPL",
                            start_date = "2018-01-01",
                            end_date = Sys.Date(), 
                            stock_exchange = "NOT_NEPSE"
@@ -60,7 +60,7 @@ get_stock_data <- function(symbol = "AAPL",
 }
 
 scraper <- function() {
-  stock_data <- get_stock_data()
+  stock_data <- ksai.get_stock_data()
 }
 
 scraper()
