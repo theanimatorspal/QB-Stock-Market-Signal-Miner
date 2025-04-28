@@ -8,9 +8,11 @@ output:
 ---
 
 ```{r title_ui, echo=FALSE}
-div(style = "display: flex; justify-content: flex-end; align-items: top; gap: 10px; margin-bottom: 10px;",
+div(style = "display: flex; justify-content: flex-end; align-items: right; gap: 10px; margin-bottom: 10px; height: 40px;",
   dateInput("top_date", NULL, value = Sys.Date()),
-  actionButton("top_action", "⛏️ Mine From Top")
+  actionButton("top_action", "⛏️ Mine From Top"),
+  fileInput("portfolio_file", NULL, buttonLabel = "📂 Upload CSV", accept = ".csv"),
+  actionButton("portfolio_analysis", "Analyze Portfolio")
 )
 ```
 

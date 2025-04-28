@@ -21,6 +21,7 @@ generate_features <- function(data) {
   bbands_avg <- bbands$mavg
   data <- data %>% 
     mutate (
+      price = as.numeric(data_adjusted_xts),
       returns = as.numeric(return_xts),
       sma_10 = as.numeric(sma_10),
       sma_20 = as.numeric(sma_20),

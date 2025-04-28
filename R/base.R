@@ -1,4 +1,5 @@
 pkgs <- c("tidyverse",
+                "languageserver",
                 "tidyquant",
                 "quantmod",
                 "TTR",
@@ -15,7 +16,13 @@ pkgs <- c("tidyverse",
                 "flexdashboard",
                 "shiny",
           
-                "reticulate"
+                "reticulate",
+          
+                "PortfolioAnalytics",
+                "readr",
+                "ROI",
+                "ROI.plugin.quadprog",
+                "ROI.plugin.glpk"
           )
 
 base <- function() {
