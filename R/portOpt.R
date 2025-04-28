@@ -2,13 +2,18 @@ source("features.R")
 
 ksai.portfolio.wrangle <- function(csv_file, type = "NEPSE") {
   df <- read_csv(csv_file)
-  wrangled <- df %>% 
-    select(-1, -3, -4, -6, -7) %>% 
-    head(-1) %>% 
-    rename("symbol" = 1,
-           "value" = 2)  %>% 
-    mutate (value = value / sum(value))
-  return (wrangled)
+  if (type == "NEPSE") {
+    wrangled <- df %>% 
+      select(-1, -3, -4, -6, -7) %>% 
+      head(-1) %>% 
+      rename("symbol" = 1,
+             "value" = 2)  %>% 
+      mutate (value = value / sum(value))
+    return (wrangled)
+  }
+  else {
+    return (df)  
+  }
 }
 
 ksai.portfolio.optimize <- function (portfolio_wrangled, stock_exchange = "NEPSE") {

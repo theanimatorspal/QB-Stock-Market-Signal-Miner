@@ -23,7 +23,11 @@ div(style = "display: flex; justify-content: flex-end; align-items: right; gap: 
 ```{r}
 source("portOpt.R")
 observeEvent(input$portfolio_analysis,  {
-  print(ksai.portfolio.optimize(input$portfolio_file, input$portfolio_stock_exchange))
+  req(input$portfolio_file$datapath)
+  se <- input$portfolio_stock_exchange
+  file <- input$portfolio_file$datapath
+  port <- ksai.portfolio.wrangle(file, type = se)
+  opt_port <- ksai.portfolio.optimize(port, se)
 })
 ```
 
