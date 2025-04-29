@@ -12,7 +12,7 @@
 
 ## 🧵 About
 
-This project is a **flexdashboard-powered application** for stock market signal prediction. It combines **dynamic web scraping with Python (Selenium)** and **data wrangling, visualization, and modeling in R**.
+Quant-based signal generator for NEPSE & Yahoo Finance that mines signals and gives you feedback of what trading action is good to take.
 
 ---
 
