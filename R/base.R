@@ -14,7 +14,6 @@ pkgs <- c("tidyverse",
                 "lightgbm",
                 "qs",
           
-                "flexdashboard",
                 "shiny",
           
                 "reticulate",

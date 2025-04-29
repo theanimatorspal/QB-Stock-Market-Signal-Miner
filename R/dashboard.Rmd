@@ -5,6 +5,7 @@ output:
     orientation: rows
     vertical_layout: fill
     runtime: shiny
+    self_contained: false
 ---
 
 ```{r title_ui, echo=FALSE}
@@ -193,6 +194,14 @@ actionButton("run", "Predict/Plot")
 
 Column {.tabset .tabset-fade}
 ---------------------------------------------------------------------
+```{r echo=FALSE}
+tabsetPanel(
+  tabPanel("💹 Predict",  plotOutput("prediction_plot")),
+  tabPanel("🧮 Features", plotOutput("features_plot")),
+  tabPanel("📊 Data", tableOutput("data_table")))
+
+```
+
 ```{r}
 
 run_event <- eventReactive(input$run, {
@@ -230,10 +239,14 @@ run_event <- eventReactive(input$run, {
   )
   result[[2]]})
 
-output$prediction_plot <-  renderPlot( { run_event() } )
+output$prediction_plot <-  renderPlot( {
+  input$run
+  
+  isolate({ run_event() }) })
 
 output$features_plot <-  renderPlot({
     input$run   
+  
     isolate({
       date_start <- input$date_range[1]
       date_end <- input$date_range[2]
@@ -278,9 +291,5 @@ output$data_table <- renderTable({
   })
 })
 
-tabsetPanel(
-  tabPanel("💹 Predict",  plotOutput("prediction_plot")),
-  tabPanel("🧮 Features", plotOutput("features_plot")),
-  tabPanel("📊 Data", tableOutput("data_table")))
 ```
 
