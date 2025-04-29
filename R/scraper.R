@@ -1,25 +1,37 @@
 source("base.R")
 
 ksai.get_stock_data <- function(symbol = "AAPL",
-                           start_date = "2018-01-01",
-                           end_date = Sys.Date(), 
-                           stock_exchange = "NOT_NEPSE"
-                           ) {
+                                start_date = "2018-01-01",
+                                end_date = Sys.Date(), 
+                                stock_exchange = "NOT_NEPSE",
+                                cache_dir = "../data/") {
+  
+  if (!dir.exists(cache_dir)) dir.create(cache_dir)
+  
+  cache_file <- file.path(
+    cache_dir,
+    paste0(stock_exchange, "_", symbol, "_", start_date, "_", end_date, ".qs")
+  )
+  
+  if (file.exists(cache_file)) {
+    return(qs::qread(cache_file))
+  }
   
   if (stock_exchange == "NOT_NEPSE") {
-  tryCatch({
+    tryCatch({
       data <- tq_get(symbol, from = start_date, to = end_date)
-      if(nrow(data) == 0) {
-       return (NULL) 
-      }
-      data <- data %>% 
-        drop_na() %>% 
-        arrange(date) %>% 
+      if (nrow(data) == 0) return(NULL)
+      
+      data <- data %>%
+        drop_na() %>%
+        arrange(date) %>%
         select(-symbol)
       
+      qs::qsave(data, cache_file)
       return(data)
-    }, error = function (e) {
-      message("Error f")
+    }, error = function(e) {
+      message(e)
+      return(NULL)
     })
   } else {
     py_require("pandas")
@@ -29,38 +41,34 @@ ksai.get_stock_data <- function(symbol = "AAPL",
     
     scraper <- py$NepseScraper()
     scraper$browse(py$NepseScraper$Page$STOCK_TRADING)
-    start_date <- format(as.Date(start_date), "%m/%d/%Y")
-    end_date <- format(as.Date(end_date), "%m/%d/%Y")
-    frame <- scraper$fetch_data_symbol(symbol, start_date, end_date)
+    start_date_fmt <- format(as.Date(start_date), "%m/%d/%Y")
+    end_date_fmt <- format(as.Date(end_date), "%m/%d/%Y")
+    frame <- scraper$fetch_data_symbol(symbol, start_date_fmt, end_date_fmt)
     scraper$stop()
     
-    frame <- data %>% arrange(Date) %>% 
+    data <- frame %>% arrange(Date) %>% 
       select(-SN) %>% 
-      rename("date" = "Date",
-             "volume" = "Total Traded Shares",
-             "high" = "Max Price",
-             "low" = "Min Price",
-             "close" = "Close Price",
-             "amount" = "Total Traded Amount",
-             "transactions" = "Total Transactions"
-             ) %>% 
-      mutate (
-        volume = str_replace(volume, ",", ""),
-        amount = str_replace(amount, ",", ""),
+      rename(
+        date = "Date",
+        volume = "Total Traded Shares",
+        high = "Max Price",
+        low = "Min Price",
+        close = "Close Price",
+        amount = "Total Traded Amount",
+        transactions = "Total Transactions"
+      ) %>% 
+      mutate(
+        volume = as.numeric(gsub(",", "", volume)),
+        amount = as.numeric(gsub(",", "", amount)),
         date = as.Date(date),
         high = as.numeric(high),
         low = as.numeric(low),
         close = as.numeric(close),
-        adjusted = as.numeric(close) # adjusted ko datai xaina
-      ) %>% 
+        adjusted = close
+      ) %>%
       select(date, high, low, close, adjusted)
-  
-    return (frame)
+    
+    qs::qsave(data, cache_file)
+    return(data)
   }
 }
-
-scraper <- function() {
-  stock_data <- ksai.get_stock_data()
-}
-
-scraper()

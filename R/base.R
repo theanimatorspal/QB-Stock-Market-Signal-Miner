@@ -12,6 +12,7 @@ pkgs <- c("tidyverse",
                 "randomForest",
                 "xgboost",
                 "lightgbm",
+                "qs",
           
                 "flexdashboard",
                 "shiny",

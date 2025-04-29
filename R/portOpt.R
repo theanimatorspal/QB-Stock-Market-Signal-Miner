@@ -23,8 +23,12 @@ ksai.portfolio.optimize <- function (portfolio_wrangled, stock_exchange = "NEPSE
                               )$adjusted) %>% 
     bind_cols()
   
+  print(portfolio_prices) 
   portfolio_returns <- ROC(portfolio_prices, type = "discrete") %>% na.omit()
-  portfolio_spec <- portfolio.spec(colnames(portfolio_returns))
+  
+  print(colnames(portfolio_returns))
+  
+  portfolio_spec <- portfolio.spec(portfolio_wrangled$symbol)
   portfolio_spec <- add.constraint(portfolio_spec,
                                    type = "weight_sum",
                                    min_sum = 1,
@@ -43,5 +47,11 @@ ksai.portfolio.optimize <- function (portfolio_wrangled, stock_exchange = "NEPSE
                                        portfolio_spec,
                                        optimize_method = "ROI",
                                        trace = TRUE) 
-  return (optimized_port)
+  optimized_weights <- extractWeights(optimized_port)
+  return (
+    tibble(
+      symbol = names(optimized_weights),
+      value = as.numeric(optimized_weights)
+    )
+  )
 }
