@@ -28,7 +28,7 @@ Quant-based signal generator for NEPSE & Yahoo Finance that mines signals and gi
 
 | Layer            | Tool/Tech       | Purpose                          |
 |------------------|------------------|----------------------------------|
-| UI & Controls     | Shiny + flexdashboard | Interactive user interface     |
+| UI & Controls     | Shiny | Interactive user interface     |
 | Visualization     | ggplot2           | Time series & directional plots |
 | Backend Logic     | R + Python bridge | Modeling pipeline, utils       |
 | Data Fetching     | Python + Selenium | Dynamic extraction from web     |
