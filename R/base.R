@@ -15,6 +15,8 @@ pkgs <- c("tidyverse",
                 "qs",
           
                 "shiny",
+                "shiny.react", 
+                "shiny.fluent",
           
                 "reticulate",
           

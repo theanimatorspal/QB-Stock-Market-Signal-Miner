@@ -1,10 +1,10 @@
-#source("base.R")
-#rmarkdown::run("dashboard.Rmd", shiny_args = list(launch.browser = TRUE, port = NULL))
-# 📦 All necessary libraries
 source("model.R")
 source("portOpt.R")
 
 ui <- fluidPage(
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+  ),
   titlePanel("📈 Stock Signal Miner"),
   fluidRow(
     # Column 1: Inputs
@@ -81,7 +81,8 @@ server <- function(input, output, session) {
       title = "📊 Portfolio Analysis",
       tableOutput("comparison"),
       easyClose = TRUE,
-      size = "l"
+      size = "l",
+      class = "dark-modal"
     ))
   })
   
@@ -168,7 +169,8 @@ server <- function(input, output, session) {
         "<b>🧠 Signal Suggestion:</b><br>", paste(suggestions, collapse = "<br><br>")
       )),
       easyClose = TRUE,
-      footer = modalButton("OK 👍")
+      footer = modalButton("OK 👍"),
+      class = "dark-modal"
     ))
   })
   
